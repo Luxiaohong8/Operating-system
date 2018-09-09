@@ -1,0 +1,47 @@
+#!/bin/sh
+dir_c=1
+file_c=0
+info_dir=~/lab1/11510424
+mkdir -p $info_dir
+info=$info_dir/file.info
+touch $info
+num=`echo ~/|awk '{print length($0)}'`
+
+function get_file_name_indir(){
+    for file in $1/*
+    do
+    if [ -f "$file" ]||[ -d "$file" ]
+    then
+   	 echo ${file:$num-1}>>$info
+    fi
+    done
+    echo >>$info
+
+}
+
+function getdir(){
+    for file in $1/*
+    do
+    if test -f $file
+    then        
+	file_c=$(($file_c+1))
+    elif [ -d "$file" ]
+    then
+	dir_c=$(($dir_c+1))
+	echo "[ $(basename $file) ]">>$info
+      	var=$file
+	get_file_name_indir $file
+        getdir $var
+    fi
+    done
+}
+
+base_dir=~
+echo "[ $(basename $base_dir) ]">$info
+get_file_name_indir $base_dir
+getdir $base_dir
+echo "[ Directories Count ] : $dir_c">>$info
+echo >>$info
+echo "[ Files Count ] : $file_c">>$info
+
+exit 0

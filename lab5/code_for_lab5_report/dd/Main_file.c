@@ -1,0 +1,59 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<semaphore.h>
+#include<pthread.h>
+#include<unistd.h>
+#include<fcntl.h>
+
+#include"read.h"
+#include "write.h"
+pthread_t rehs[600], wrhs[25];
+int main(){
+	int nw,nr;
+    printf("\nEnter the no readers : ");
+    scanf("%d",&nr);
+    printf("\nEnter the no Writers : ");
+printf("dds");
+    scanf("%d",&nw);
+printf("dds");
+	sem_open("db", O_CREAT|O_EXCL, S_IRWXU, 1);
+printf("dds");
+	sem_open("rc", O_CREAT|O_EXCL, S_IRWXU, 1);
+    readcount = 0;
+printf("dds");
+	int buffer = 0;
+	int i = 0, j =0, k = 0, r = 0;
+
+	srand(time(0));
+
+	for(i=0;i<nw + nr;i++)
+	{
+		r = rand()%2;
+
+		if(0 == r)
+		{
+			if(j<nw)
+			{
+				pthread_create(&wrhs[j],NULL,writer,&buffer);
+				j+=1;
+			}else{
+				pthread_create(&rehs[j],NULL,reader,&buffer);
+				k+=1;
+			}
+		}
+		else{
+			if(k<nr)
+			{
+				pthread_create(&rehs[j],NULL,reader,&buffer);
+				k+=1;
+			}else{
+				pthread_create(&wrhs[j],NULL,writer,&buffer);
+				j+=1;
+			}
+		}
+	}
+    for (i = 0; i < nw; i++)
+		pthread_join (wrhs[i], NULL);
+	for (i = 0; i < nr; i++)
+		pthread_join (rehs[i], NULL);
+}
